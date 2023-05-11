@@ -42,11 +42,12 @@ $(document).ready(function() {
             itemList.append(listItem);
         
         });
-
+        //lägger till titel i categoryContainer
         categoryContainer.append(categoryTitle);
+        // lägger till itemlistan till categoryContainer
         categoryContainer.append(itemList);
-
-        accordionContainer.append(categoryContainer); // lägg till category till accordion
+        // lägger till category till accordion
+        accordionContainer.append(categoryContainer); 
     });
 
     menuContainer.append(accordionContainer); // lägg till accordion till meny
@@ -66,7 +67,7 @@ $(document).ready(function() {
         let listItem = $(this).closest('li'); // hitta närmaste 'li' element
         let clonedItem = listItem.clone(); // skapa en klon av 'li' elementet
     
-        clonedItem.find('.bi').removeClass('bi bi-plus-circle').addClass('bi bi-dash-circle'); // byta plus ikon till dash
+        clonedItem.find('.bi').removeClass('bi bi-plus-circle').addClass('bi bi-dash-circle'); // byta plus ikon till minus
     
         $('#shoppingCart').append(clonedItem); // lägg till klonen till varukorgen
     });

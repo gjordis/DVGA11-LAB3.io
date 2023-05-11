@@ -26,12 +26,9 @@ body {
     padding-bottom: 80px;
 }
 
-.list-group {
-    
-}
 
-.btn {
-    color: white;
+#meny-btn, #varukorg-btn {
+    color: black;
     height: 75px;
     width: 50%;
     border: 1px solid black;
@@ -39,8 +36,25 @@ body {
     
 }
 
+#saveButton {
+    background-color:#FF6000;
+    color: black;
+    width: 20%;
+    height: 55px;
+}
+
+
+
+textarea {
+    background: rgba(255, 165, 89, .4);
+    color: black;
+}
+
+
+
 #meny-varukorg {
-    
+    padding-bottom: 80px;
+
 }
 
 /* styling meny-lista*/
@@ -49,8 +63,6 @@ body {
     /* färg med rätt opacity*/
     background: rgba(255, 230, 199, .4);
     
-    padding: 20px 0;
-    width: 100%;
 }
 
 li {
@@ -73,27 +85,32 @@ strong {
 .bi {
     width:100%;
     text-align: center;
-    
-    
 }
+
 /* ändrar storleken på ikonen*/
 .bi::before {
     scale: 300%;
 }
 
 #addComment {
-    width:15%;
+    width:14%;
     display: flex;
-    justify-content: center;
+    margin-right: 2%;
     align-items: center;
 }
 
+#removePizza {
+    width:14%;
+    display: flex;
+    align-items: center; 
+    
+}
+
 #addPizza {
-    width:15%;
+    width:50px;
     display: flex;
     justify-content: center;
     align-items: center; 
-    
 }
 
 #pizza {
