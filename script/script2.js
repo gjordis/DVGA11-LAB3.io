@@ -24,8 +24,8 @@ $(document).ready(function () {
             if (item.contents) {
                 $.each(item.contents, function (i, content) {
                     if (content.startsWith('a:')) {
-                        content = content.replace('a:', '');
-                        itemContents += '<span class="allergi">' + content + '</span>';
+                        content = content.replace('a:', '*');
+                        itemContents += '<strong class="allergi">' + content + '</strong>';
                     } else {
                         itemContents += content;
                     }
@@ -37,8 +37,8 @@ $(document).ready(function () {
 
 
             let listItem = $('<li class="p-3 d-flex justify-content-between flex-wrap"></li>').html
-                ('<div id="pizza" class="d-flex flex-wrap"><strong>' + item.name + ':' + '</strong>'
-                    + '<span id="price">' + item.price + ' :-' + '</span>' + '<span id="contents">' + itemContents + '</span></div>' + '<div id="addPizza"><i class="bi bi-plus-circle"></i></div>');
+                ('<div id="pizza" class="d-flex flex-wrap justify-content-between"><h5>' + item.name + ':' + '</h5>'
+                    + '<span id="price">' + item.price + ':-' + '</span>' + '<span id="contents">' + itemContents + '</span></div>' + '<div id="addPizza"><i class="bi bi-plus-circle"></i></div>');
 
 
             itemList.append(listItem);
@@ -59,93 +59,138 @@ $(document).ready(function () {
     $('#varukorg-btn').on('click', function () {
         $('#meny-varukorg').removeClass('d-none');
         $('#meny').addClass('d-none');
+        $('#meny-btn').removeClass('meny-btn-toggle').addClass('meny-btn');
+        $('#varukorg-btn').removeClass('varukorg-btn').addClass('varukorg-btn-toggle');
     });
     // byter till meny
     $('#meny-btn').on('click', function () {
         $('#meny').removeClass('d-none');
         $('#meny-varukorg').addClass('d-none');
+        $('#varukorg-btn').removeClass('varukorg-btn-toggle').addClass('varukorg-btn');
+        $('#meny-btn').removeClass('meny-btn').addClass('meny-btn-toggle');
     });
 
     /* Lägga till vara i varukorgen */
     $(document).on('click', '.bi-plus-circle', function (e) {
         let item = $(this).closest('li'); // hitta närmaste 'li' element
-        let itemName = item.find('strong').text(); // hitta namnet på varan
+        let itemName = item.find('h5').text(); // hitta namnet på varan
         let itemPrice = item.find('#price').text(); // hitta priset på varan
-        let itemContents = item.find('#contents').text(); // hitta innehållet i varan
-        
+        let itemContents = item.find('#contents').clone(); // hitta innehållet i varan
+
         let categoryId = item.parent().attr('id'); // hitta id för kategorin
         let isPizza = categoryId.includes('Pizzor'); // kontrollera om det är en pizza
-    
+
         let listItem;
         if (isPizza) {
             listItem = $('<li class="p-3 d-flex justify-content-between flex-wrap"></li>').html
-                ('<div id="pizza" class="d-flex flex-wrap"><strong>' + itemName + ':' + '</strong>'
-                    + '<span id="price">' + itemPrice + '</span>' + '<span id="contents">' + itemContents + '</span></div>' + '<div id="addComment"><i class="bi bi-chat-text"></i></div>' + '<div id="removePizza"><i class="bi bi-dash-circle"></i></div>');
+                ('<div id="pizza" class="d-flex flex-wrap"><h5>' + itemName + '</h5>'
+                    + '<span id="price">' + itemPrice + '</span>' + '<span id="contents">' + itemContents.html() + '</span></div>' + '<div id="addComment"><i class="bi bi-chat-text"></i></div>' + '<div id="removePizza"><i class="bi bi-dash-circle"></i></div>' + '<div class="listComment"></div>');
         } else {
             listItem = $('<li class="p-3 d-flex justify-content-between flex-wrap"></li>').html
-                ('<div id="pizza" class="d-flex flex-wrap"><strong>' + itemName + ':' + '</strong>'
-                    + '<span id="price">' + itemPrice + '</span>' + '<span id="contents">' + itemContents + '</span></div>' + '<div id="removePizza"><i class="bi bi-dash-circle"></i></div>');
+                ('<div id="pizza" class="d-flex flex-wrap"><h5>' + itemName + '</h5>'
+                    + '<span id="price">' + itemPrice + '</span>' + '<span id="contents">' + itemContents.html() + '</span></div>' + '<div id="removePizza"><i class="bi bi-dash-circle"></i></div>');
         }
-        
+
         $('#meny-varukorg').append(listItem); // lägg till varan i varukorgen
-    
+        // uppdatera totalsumman
+        updateTotalSum();
+
     });
-    
 
 
     /* ta bort vara från varukorgen */
     $(document).on('click', '.bi-dash-circle', function (e) {
         let listItem = $(this).closest('li'); // hitta närmaste 'li' element
         listItem.remove(); // ta bort 'li' elementet från DOM
+
+        updateTotalSum(); // 
     });
 
-    /* Lägga till kommentar på vara i varukorg */
     $(document).on('click', '#addComment', function (e) {
         let listItem = $(this).closest('li'); // hitta närmaste 'li' element
-        let commentBox = listItem.find('textarea'); // letar efter en textarea i listobjektet
-        let saveButton = listItem.find('#saveButton'); // letar efter spara-knappen i listobjektet
-        let existingComment = listItem.find('p'); // hitta befintlig kommentar
+        let commentContainer = listItem.find('.comment-container'); // letar efter kommentarrutans behållare
         let commentIcon = $(this).children(); // hitta kommentarikonen
+        let commentText = listItem.find('.listComment'); // hitta div som kommentar skall läggas
     
-        // kollar om textarea och saveButton redan finns
-        if (commentBox.length > 0 && saveButton.length > 0) {
-            // om de finns, ta bort dem
-            commentBox.remove();
-            saveButton.remove();
-            commentIcon.removeClass('bi-chat-text-fill').addClass('bi-chat-text'); // ändrar ikonen till ofylld
+        // togglar kommentaren
+        // kollar om kommentarrutan redan finns uppe
+        if (commentContainer.length) {
+            // om den finns, ta bort den
+            commentContainer.remove();
+            // ändrar ikonen till ofylld
+            commentIcon.removeClass('bi-chat-text-fill').addClass('bi-chat-text'); 
         } else {
-            // om de inte finns, skapa dem
-            if (existingComment.length) { // om en kommentar redan finns
-                commentBox = $('<textarea class="mt-3" placeholder="Lägg till kommentar">' + existingComment.text() + '</textarea>'); // skapa en inmatningsruta med befintlig kommentar
-            } else {
-                commentBox = $('<textarea class="mt-3" placeholder="Lägg till kommentar"></textarea>'); // skapa en inmatningsruta
-            }
-            saveButton = $('<button class="btn btn-sm border-0 rounded-0 mt-3" id="saveButton">Spara</button>');
-            saveButton.on('click', function () { // lägg till en händelsehanterare för "spara"-knappen
-                let comment = commentBox.val(); // hämta kommentaren från inmatningsrutan
-                if (existingComment.length) { // om en kommentar redan finns
-                    existingComment.text(comment); // uppdatera befintlig kommentar
-                } else {
-                    listItem.append('<p class="mt-3">' + comment + '</p>'); // lägg till kommentaren under listobjektet
-                }
-                commentBox.remove(); // ta bort inmatningsrutan
-                saveButton.remove(); // ta bort "spara"-knappen
-                commentIcon.removeClass('bi-chat-text-fill').addClass('bi-chat-text'); // ändrar ikonen till ofylld
+            // om den inte finns, skapa den
+            // skapa en tom inmatningsruta
+            let commentBox = $('<textarea class="mt-3" placeholder="Lägg till kommentar"></textarea>'); 
+            // skapar en spara-knapp
+            let saveButton = $('<button class="btn btn-sm border-0 rounded-0 mt-3" id="saveButton">Spara</button>'); 
+            
+            // lägg till en händelsehanterare för spara-knappen
+            saveButton.on('click', function () { 
+
+                // variabel för textareans inmatning
+                let comment = commentBox.val();
+                //console.log(commentBox.val()); 
+                
+                // lägg till kommentaren i kommentarsfältet
+                commentText.append('<p class="kommentar">' + comment + '</p>'); 
+                
+                // ta bort textarean och knappen vid save
+                commentContainer.remove(); 
+                // ändrar ikonen till ofylld
+                commentIcon.removeClass('bi-chat-text-fill').addClass('bi-chat-text'); 
             });
-            listItem.append(commentBox); // lägg till inmatningsrutan under listobjektet
-            listItem.append(saveButton); // lägg till "spara"-knappen under listobjektet
+            // div som textarea och save-knapp skall innehålla
+            commentContainer = $('<div class="comment-container"></div>'); 
+            // lägg till inmatningsrutan under behållaren
+            commentContainer.append(commentBox); 
+            // lägg till "spara"-knappen under behållaren
+            commentContainer.append(saveButton); 
+            // lägger till behållaren under listobjektet
+            listItem.append(commentContainer); 
     
+            // togglar ikonen mellan fylld/ofylld
             if (commentIcon.hasClass('bi-chat-text')) {
                 commentIcon.removeClass('bi-chat-text').addClass('bi-chat-text-fill');
-            } 
+            }
         }
+        // uppdatera totalsumman
+        updateTotalSum(); 
     });
+    
+    
+    
     
 
 
+    // funktion som uppdaterar totalsumman i varukorgne
+    function updateTotalSum() {
+        // skapar en variabel 'total' och sätter den till 0 för att starta
+        let total = 0;
+
+        // för varje pris-element i varukorgen, gör följande:
+        $('#meny-varukorg #price').each(function () {
+            // Hämta texten från det aktuella priset, konvertera den till en flyttal och lägg till den till total summan
+
+            // hämtar priset som text
+            let priceText = $(this).text(); 
+            // konverterar priset till ett flyttal
+            let priceNumber = parseFloat(priceText);
+            // lägger till priset till total 
+            total += priceNumber; 
+        });
+
+        // Uppdatera texten i 'totalSum' elementet med den nya totala summan
+        $('#totalSum').text('total: ' + total + ':-');
+    };
 
 
-    /*  här skall knapparna bli interaktiva  */
+
+
+
+
+    /*  här skall knapparna komma till liv  */
 
     // vid tryck ändra till fylld ikon
     $(document).on('touchstart', '.bi-plus-circle, .bi-dash-circle', function () {
@@ -166,7 +211,6 @@ $(document).ready(function () {
             currentIcon.removeClass('bi-dash-circle-fill').addClass('bi-dash-circle');
         }
     });
-
 });
 
 
