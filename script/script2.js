@@ -95,15 +95,28 @@ $(document).ready(function () {
         // uppdatera totalsumman
         updateTotalSum();
 
+        /* uppdatera badge med antal li-element som finns i varukorgen */
+        let varuNum = $('#meny-varukorg li').length;
+        let varuNumText = parseFloat(varuNum);
+        //console.log(varuNumText);
+        $('.badge').text(varuNumText);
     });
 
+   
 
     /* ta bort vara från varukorgen */
     $(document).on('click', '.bi-dash-circle', function (e) {
         let listItem = $(this).closest('li'); // hitta närmaste 'li' element
         listItem.remove(); // ta bort 'li' elementet från DOM
 
-        updateTotalSum(); // 
+        // uppdatera totalsumman
+        updateTotalSum(); 
+
+        /* uppdatera badge med antal li-element som finns i varukorgen */
+        let varuNum = $('#meny-varukorg li').length;
+        let varuNumText = parseFloat(varuNum);
+        //console.log(varuNumText);
+        $('.badge').text(varuNumText);
     });
 
     $(document).on('click', '#addComment', function (e) {
@@ -160,9 +173,9 @@ $(document).ready(function () {
     });
     
     
-    
-    
+     /* Visa hur många saker som finns i varukorgen, badge vid knappen "varukorg" */
 
+ 
 
     // funktion som uppdaterar totalsumman i varukorgne
     function updateTotalSum() {
@@ -187,28 +200,35 @@ $(document).ready(function () {
 
 
 
-
-
-
     /*  här skall knapparna komma till liv  */
 
     // vid tryck ändra till fylld ikon
     $(document).on('touchstart', '.bi-plus-circle, .bi-dash-circle', function () {
         let currentIcon = $(this);
+        let badgeSize = $('.badge');
         if (currentIcon.hasClass('bi-plus-circle')) {
             currentIcon.removeClass('bi-plus-circle').addClass('bi-plus-circle-fill');
+            // ändrar badge vid ändring i varukorgen
+            badgeSize.addClass('badgeLarge');
         } else if (currentIcon.hasClass('bi-dash-circle')) {
             currentIcon.removeClass('bi-dash-circle').addClass('bi-dash-circle-fill');
+            // ändrar badge vid ändring i varukorgen
+            badgeSize.addClass('badgeLarge');
         }
     });
 
     // vid släpp ändra tillbaka ikonen
     $(document).on('touchend', '.bi-plus-circle-fill, .bi-dash-circle-fill', function () {
         let currentIcon = $(this);
+        let badgeSize = $('.badge');
         if (currentIcon.hasClass('bi-plus-circle-fill')) {
             currentIcon.removeClass('bi-plus-circle-fill').addClass('bi-plus-circle');
+            // ändrar badge vid ändring i varukorgen
+            badgeSize.removeClass('badgeLarge');
         } else if (currentIcon.hasClass('bi-dash-circle-fill')) {
             currentIcon.removeClass('bi-dash-circle-fill').addClass('bi-dash-circle');
+            // ändrar badge vid ändring i varukorgen
+            badgeSize.removeClass('badgeLarge');
         }
     });
 });
