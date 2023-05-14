@@ -18,8 +18,8 @@ $(document).ready(function () {
         // skapar kategorier
         let categoryContainer = $('<div class="kategori"></div>');
         // skapar titeln
-        let categoryTitle = $('<h4 class="category-title collapsed p-3" data-bs-toggle="collapse" data-bs-target="#' 
-        + categoryId + '" role="button" aria-expanded="false" aria-controls="' + categoryId + '"></h4>').text(category);
+        let categoryTitle = $('<h4 class="category-title collapsed p-3 bi-chevron-down" data-bs-toggle="collapse" data-bs-target="#'
+            + categoryId + '" role="button" aria-expanded="false" aria-controls="' + categoryId + '"></h4>').text(category);
 
         // skapar list-items som är dolda från början
         let itemList = $('<ul class="item-list mb-0 collapse list-unstyled" id="' + categoryId + '" data-bs-parent="#accordion"></ul>');
@@ -49,17 +49,21 @@ $(document).ready(function () {
                         // om inte lägg till ett ", "
                         itemContents += ', ';
                     }
+                    
                 });
             }
 
             // skapar varje vara som skall ligga i listan för kategorierna
             let listItem = $('<li class="p-3 d-flex justify-content-between flex-wrap"></li>').html
                 ('<div id="pizza" class="d-flex flex-wrap justify-content-between"><h5>' + item.name + ':' + '</h5>'
-                    + '<span id="price">' + item.price + ':-' + '</span>' + '<span id="contents">' + itemContents + '</span></div>' 
+                    + '<span id="price">' + item.price + ':-' + '</span>' + '<span id="contents">' + itemContents + '</span></div>'
                     + '<div id="addPizza"><i class="bi bi-plus-circle"></i></div>');
 
             // lägger till varorna i itemList
             itemList.append(listItem);
+
+           
+
 
         });
 
@@ -71,7 +75,7 @@ $(document).ready(function () {
         accordionContainer.append(categoryContainer);
     });
     // lägg till accordion till meny
-    menuContainer.append(accordionContainer); 
+    menuContainer.append(accordionContainer);
 
     // byter till varukorg
     $('#varukorg-btn').on('click', function () {
@@ -92,18 +96,18 @@ $(document).ready(function () {
     /* Lägga till vara i varukorgen */
     $(document).on('click', '.bi-plus-circle', function (e) {
         // hitta närmaste 'li' element
-        let item = $(this).closest('li'); 
+        let item = $(this).closest('li');
         // hitta namnet på varan
-        let itemName = item.find('h5').text(); 
-         // hitta priset på varan
+        let itemName = item.find('h5').text();
+        // hitta priset på varan
         let itemPrice = item.find('#price').text();
         // hitta innehållet i varan
-        let itemContents = item.find('#contents').clone(); 
+        let itemContents = item.find('#contents').clone();
 
         // hitta id för kategorin
-        let categoryId = item.parent().attr('id'); 
+        let categoryId = item.parent().attr('id');
         // kontrollera om det är en pizza
-        let isPizza = categoryId.includes('Pizzor'); 
+        let isPizza = categoryId.includes('Pizzor');
 
         let listItem; // variabel för att skapa kopian av varan
 
@@ -125,9 +129,9 @@ $(document).ready(function () {
                     + '<div id="removePizza"><i class="bi bi-dash-circle"></i></div>');
         }
         // lägg till varan i varukorgen
-        $('#shoppingCart').append(listItem); 
+        $('#shoppingCart').append(listItem);
         // uppdatera totalsumman
-        updateTotalSum(); 
+        updateTotalSum();
 
         /* uppdatera badge med antal li-element som finns i varukorgen */
         let varuNum = $('#meny-varukorg li').length;
@@ -156,13 +160,13 @@ $(document).ready(function () {
 
     $(document).on('click', '#addComment', function (e) {
         // hitta närmaste 'li' element
-        let listItem = $(this).closest('li'); 
+        let listItem = $(this).closest('li');
         // letar efter kommentarrutans behållare
-        let commentContainer = listItem.find('.comment-container'); 
+        let commentContainer = listItem.find('.comment-container');
         // hitta kommentarikonen
-        let commentIcon = $(this).children(); 
+        let commentIcon = $(this).children();
         // hitta div som kommentar skall läggas
-        let commentText = listItem.find('.listComment'); 
+        let commentText = listItem.find('.listComment');
 
         /* togglar kommentaren */
         // kollar om kommentarrutan redan finns uppe
@@ -174,7 +178,7 @@ $(document).ready(function () {
         } else {
             // om den inte finns, skapa den
             // skapa en tom inmatningsruta
-            let commentBox = $('<textarea class="mt-3" placeholder="Lägg till kommentar"></textarea>');
+            let commentBox = $('<textarea maxlength="50" class="mt-3" placeholder="Lägg till kommentar"></textarea>');
             // skapar en spara-knapp
             let saveButton = $('<button class="btn btn-sm border-0 rounded-0 mt-3" id="saveButton">Spara</button>');
 
@@ -183,7 +187,7 @@ $(document).ready(function () {
 
                 // variabel för textareans inmatning
                 let comment = commentBox.val();
-                //console.log(commentBox.val()); 
+                //console.log(commentBox.val());
 
                 // lägg till kommentaren i kommentarsfältet
                 commentText.append('<p class="kommentar">' + comment + '</p>');
@@ -274,25 +278,39 @@ $(document).ready(function () {
     // gör meny-knappen större vid tryck
     $(document).on('touchstart', '#meny-btn', function () {
         let currentIcon = $(this);
-        currentIcon.addClass('largeBtn');   
-        } );
-  
+        currentIcon.addClass('largeBtn');
+    });
+
     $(document).on('touchend', '#meny-btn', function () {
         let currentIcon = $(this);
-        currentIcon.removeClass('largeBtn');   
+        currentIcon.removeClass('largeBtn');
     });
 
 
     // gör varkorg-knappen större vid tryck
     $(document).on('touchstart', '#varukorg-btn', function () {
         let currentIcon = $(this);
-        currentIcon.addClass('largeBtn');   
-        } );
-  
+        currentIcon.addClass('largeBtn');
+    });
+
     $(document).on('touchend', '#varukorg-btn', function () {
         let currentIcon = $(this);
-        currentIcon.removeClass('largeBtn');   
+        currentIcon.removeClass('largeBtn');
     });
+
+    /* få pilar till menyns-titlar att ändras, för att visa drop-downfunk */
+    // Lyssna på show.bs.collapse händelse
+    accordionContainer.on('show.bs.collapse', '.collapse', function () {
+        // Hitta tillhörande kategorititel och byt ikonn
+        $(this).prev('.category-title').removeClass('bi-chevron-down').addClass('bi-chevron-up');
+    });
+
+    // Lyssna på hide.bs.collapse händelse
+    accordionContainer.on('hide.bs.collapse', '.collapse', function () {
+        // Hitta tillhörande kategorititel och byt ikon
+        $(this).prev('.category-title').removeClass('bi-chevron-up').addClass('bi-chevron-down');
+    }); 
+
 });
 
 
