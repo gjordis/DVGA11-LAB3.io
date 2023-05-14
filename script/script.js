@@ -77,6 +77,8 @@ $(document).ready(function () {
     // lägg till accordion till meny
     menuContainer.append(accordionContainer);
 
+
+    /* meny-Knappar */
     // byter till varukorg
     $('#varukorg-btn').on('click', function () {
         $('#meny-varukorg').removeClass('d-none');
@@ -92,6 +94,7 @@ $(document).ready(function () {
         $('#varukorg-btn').removeClass('varukorg-btn-toggle').addClass('varukorg-btn');
         $('#meny-btn').removeClass('meny-btn').addClass('meny-btn-toggle');
     });
+
 
     /* Lägga till vara i varukorgen */
     $(document).on('click', '.bi-plus-circle', function (e) {
@@ -302,6 +305,7 @@ $(document).ready(function () {
     // Lyssna på show.bs.collapse händelse
     accordionContainer.on('show.bs.collapse', '.collapse', function () {
         // Hitta tillhörande kategorititel och byt ikonn
+        //console.log($(this).prev('.category-title'));
         $(this).prev('.category-title').removeClass('bi-chevron-down').addClass('bi-chevron-up');
     });
 
