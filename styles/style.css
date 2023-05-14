@@ -95,7 +95,7 @@ body {
 
 textarea {
     background: rgba(255, 165, 89, .4);
-    
+    resize: none;
 }
 
 #saveButton {
@@ -127,12 +127,6 @@ li {
 
 
 
-#price {
-    width: 10%;
-    text-align: center;
-
-}
-
 .bi {
     width: 100%;
     text-align: center;
@@ -143,18 +137,21 @@ li {
     scale: 280%;
 }
 
+
 #addComment {
-    width: 13%;
+    width: 14%;
     display: flex;
-    margin-right: 2%;
+    /*margin-right: 2%;*/
     align-items: center;
+    height: 50px;
+
 }
 
 #removePizza {
-    width: 13%;
+    width: 14%;
     display: flex;
     align-items: center;
-
+    height: 50px;
 }
 
 #addPizza {
@@ -162,29 +159,58 @@ li {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 50px;
 }
 
 #pizza {
     width: 72%;
-
 }
+
+#price {
+    width: 14%;
+    text-align: center;
+}
+
 
 #contents {
 
     max-width: 88%;
     word-break: break-word;
+}
 
+h5 {
+    font-size: 17px;
+    width: 87%;
+    max-width: 85%;
+    font-weight: 600;
+}
+
+.bi-chevron-down:before {
+    scale: 70%;
+    float: right;
+    justify-content: space-between;
+    
+}
+
+.bi-chevron-up:before {
+    scale: 70%;
+    float: right;
+    justify-content: space-between;
+    
 }
 
 .allergi {
     font-weight: bold;
 }
 
-h5 {
-    font-size: 17px;
-    width: 85%;
-    max-width: 85%;
-    font-weight: 600;
+
+
+@media screen and (max-width: 380px) {
+    #addComment,
+    #removePizza,
+    #addPizza {
+        scale: 80%;
+    } 
 }
 
 
